@@ -17,7 +17,6 @@ jobs:
       run: |
         if [ -f "LANChatApp.zip" ]; then
           unzip -o LANChatApp.zip -d extracted_app
-          # Move contents if nested inside a folder
           if [ -d "extracted_app/LANChatApp" ]; then
             cp -rn extracted_app/LANChatApp/* . || true
             cp -rn extracted_app/LANChatApp/.* . || true
@@ -25,6 +24,15 @@ jobs:
             cp -rn extracted_app/* . || true
             cp -rn extracted_app/.* . || true
           fi
+        fi
+
+    - name: Fix Invalid Compose Plugin
+      run: |
+        if [ -f "build.gradle.kts" ]; then
+          sed -i '/org.jetbrains.kotlin.plugin.compose/d' build.gradle.kts
+        fi
+        if [ -f "build.gradle" ]; then
+          sed -i '/org.jetbrains.kotlin.plugin.compose/d' build.gradle
         fi
 
     - name: Set up JDK 17
