@@ -17,12 +17,13 @@ jobs:
       run: |
         if [ -f "LANChatApp.zip" ]; then
           unzip -o LANChatApp.zip -d extracted_app
-          if [ -d "extracted_app/LANChatApp" ]; then
-            cp -rn extracted_app/LANChatApp/* . || true
-            cp -rn extracted_app/LANChatApp/.* . || true
-          else
-            cp -rn extracted_app/* . || true
-            cp -rn extracted_app/.* . || true
+          # Auto-locate gradlew and copy everything to working directory
+          GRADLEW_PATH=$(find extracted_app -name gradlew -type f | head -n 1)
+          if [ -n "$GRADLEW_PATH" ]; then
+            PROJECT_DIR=$(dirname "$GRADLEW_PATH")
+            echo "Found project at: $PROJECT_DIR"
+            cp -r "$PROJECT_DIR"/* . || true
+            cp -r "$PROJECT_DIR"/.* . 2>/dev/null || true
           fi
         fi
 
